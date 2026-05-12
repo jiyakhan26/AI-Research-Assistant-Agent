@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | AI Research Assistant{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5">
+  <div class="page-header mb-5">
+    <h2><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Research Dashboard</h2>
+    <p class="text-muted">Overview of your research session activity.</p>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-icon bg-primary-soft mb-2"><i class="bi bi-file-text text-primary fs-3"></i></div>
+        <h2 class="stat-number">{{ stats.papers }}</h2>
+        <p class="text-muted small mb-0">Papers Saved</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-icon bg-success-soft mb-2"><i class="bi bi-quote text-success fs-3"></i></div>
+        <h2 class="stat-number">{{ stats.citations }}</h2>
+        <p class="text-muted small mb-0">Citations Extracted</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-icon bg-warning-soft mb-2"><i class="bi bi-shield text-warning fs-3"></i></div>
+        <h2 class="stat-number">{{ stats.reports }}</h2>
+        <p class="text-muted small mb-0">Plagiarism Reports</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-icon bg-info-soft mb-2"><i class="bi bi-search text-info fs-3"></i></div>
+        <h2 class="stat-number">{{ stats.searches }}</h2>
+        <p class="text-muted small mb-0">Searches Run</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Recent Searches -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header d-flex align-items-center gap-2">
+          <i class="bi bi-clock-history text-primary"></i>
+          <strong>Recent Searches</strong>
+        </div>
+        <div class="card-body p-0">
+          {% if recent_searches %}
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr><th>Query</th><th>Source</th><th>Results</th></tr>
+            </thead>
+            <tbody>
+              {% for s in recent_searches %}
+              <tr>
+                <td><a href="/search/?q={{ s.query }}" class="text-decoration-none">{{ s.query[:40] }}</a></td>
+                <td><span class="badge bg-secondary">{{ s.source or 'both' }}</span></td>
+                <td>{{ s.results_count }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-search fs-2 mb-2 d-block"></i>No searches yet.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Papers -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header d-flex align-items-center gap-2">
+          <i class="bi bi-journals text-success"></i>
+          <strong>Recent Papers</strong>
+        </div>
+        <div class="card-body p-0">
+          {% if recent_papers %}
+          <ul class="list-group list-group-flush">
+            {% for p in recent_papers %}
+            <li class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <p class="mb-0 small fw-semibold">{{ p.title[:60] }}{% if p.title|length > 60 %}...{% endif %}</p>
+                  <span class="text-muted small">{{ p.authors[:40] }}</span>
+                </div>
+                <span class="badge bg-primary-subtle text-primary ms-2">{{ p.year }}</span>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-file-earmark fs-2 mb-2 d-block"></i>No papers saved yet.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mt-5">
+    <h5 class="fw-bold mb-3">Quick Actions</h5>
+    <div class="d-flex flex-wrap gap-3">
+      <a href="/search/" class="btn btn-outline-primary"><i class="bi bi-search me-1"></i>New Search</a>
+      <a href="/citation/" class="btn btn-outline-success"><i class="bi bi-upload me-1"></i>Upload PDF</a>
+      <a href="/plagiarism/" class="btn btn-outline-warning"><i class="bi bi-shield-check me-1"></i>Check Plagiarism</a>
+      <a href="/reference/" class="btn btn-outline-danger"><i class="bi bi-bookmark me-1"></i>Format References</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

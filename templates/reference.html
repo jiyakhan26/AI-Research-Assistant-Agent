@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Reference Formatter | AI Research Assistant{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5">
+  <div class="page-header mb-4">
+    <h2><i class="bi bi-bookmark-check me-2 text-danger"></i>Reference Formatting Agent</h2>
+    <p class="text-muted">Enter citation details and the agent will automatically generate APA, IEEE, and MLA formats.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Input Form -->
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold"><i class="bi bi-pencil me-2"></i>Citation Details</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Authors <span class="text-muted small">(comma-separated)</span></label>
+            <input type="text" id="refAuthors" class="form-control" placeholder="John Smith, Jane Doe"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Title</label>
+            <input type="text" id="refTitle" class="form-control" placeholder="Paper or book title"/>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label fw-semibold">Year</label>
+              <input type="text" id="refYear" class="form-control" placeholder="2024" maxlength="4"/>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-semibold">Journal / Publisher</label>
+              <input type="text" id="refJournal" class="form-control" placeholder="Nature, IEEE Access..."/>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">URL / DOI <span class="text-muted small">(optional)</span></label>
+            <input type="text" id="refUrl" class="form-control" placeholder="https://doi.org/..."/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Default Style</label>
+            <select id="refStyle" class="form-select">
+              <option value="apa">APA 7th Edition</option>
+              <option value="ieee">IEEE</option>
+              <option value="mla">MLA 9th Edition</option>
+            </select>
+          </div>
+          <button class="btn btn-danger w-100" onclick="formatReference()">
+            <i class="bi bi-magic me-1"></i>Generate All Formats
+          </button>
+        </div>
+      </div>
+
+      <!-- Batch Input -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header fw-semibold"><i class="bi bi-list-ol me-2"></i>Batch Format (JSON)</div>
+        <div class="card-body">
+          <textarea id="batchInput" class="form-control font-mono small" rows="6"
+                    placeholder='[{"authors":"Smith J","title":"My Paper","year":"2023","journal":"IEEE"}]'></textarea>
+          <button class="btn btn-outline-danger w-100 mt-2" onclick="batchFormat()">
+            <i class="bi bi-layers me-1"></i>Batch Format
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output Panel -->
+    <div class="col-md-7">
+      <div id="refEmpty" class="text-center py-5 text-muted">
+        <i class="bi bi-bookmark fs-1 mb-3 d-block"></i>
+        <p>Fill in citation details and click Generate.</p>
+      </div>
+
+      <div id="refResults" class="d-none">
+        <!-- APA -->
+        <div class="card shadow-sm mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold"><span class="badge bg-primary me-2">APA</span>7th Edition</span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="copyFormat('apa')">
+              <i class="bi bi-copy me-1"></i>Copy
+            </button>
+          </div>
+          <div class="card-body">
+            <p id="apaOutput" class="mb-0 formatted-citation"></p>
+          </div>
+        </div>
+
+        <!-- IEEE -->
+        <div class="card shadow-sm mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold"><span class="badge bg-success me-2">IEEE</span>Standard</span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="copyFormat('ieee')">
+              <i class="bi bi-copy me-1"></i>Copy
+            </button>
+          </div>
+          <div class="card-body">
+            <p id="ieeeOutput" class="mb-0 formatted-citation"></p>
+          </div>
+        </div>
+
+        <!-- MLA -->
+        <div class="card shadow-sm mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold"><span class="badge bg-warning text-dark me-2">MLA</span>9th Edition</span>
+            <button class="btn btn-sm btn-outline-secondary" onclick="copyFormat('mla')">
+              <i class="bi bi-copy me-1"></i>Copy
+            </button>
+          </div>
+          <div class="card-body">
+            <p id="mlaOutput" class="mb-0 formatted-citation"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Results -->
+      <div id="batchResults" class="d-none">
+        <h6 class="fw-bold mb-3">Batch Formatted References</h6>
+        <div id="batchList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/reference.js') }}"></script>
+{% endblock %}

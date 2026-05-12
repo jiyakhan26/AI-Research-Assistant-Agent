@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Citation Extraction | AI Research Assistant{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5">
+  <div class="page-header mb-4">
+    <h2><i class="bi bi-file-earmark-pdf me-2 text-success"></i>Citation Extraction Agent</h2>
+    <p class="text-muted">Upload a PDF or paste text to automatically extract and parse all references.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Input Panel -->
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs" id="inputTabs">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pdfTab">
+                <i class="bi bi-file-earmark-pdf me-1"></i>Upload PDF
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#textTab">
+                <i class="bi bi-card-text me-1"></i>Paste Text
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="tab-content">
+            <!-- PDF Upload Tab -->
+            <div class="tab-pane fade show active" id="pdfTab">
+              <div class="upload-zone text-center p-4" id="uploadZone">
+                <i class="bi bi-cloud-upload fs-1 text-muted mb-3 d-block"></i>
+                <p class="fw-semibold mb-1">Drop PDF here or click to browse</p>
+                <p class="text-muted small mb-3">Max 16MB &bull; PDF only</p>
+                <input type="file" id="pdfFile" accept=".pdf" class="d-none" onchange="handleFileSelect(this)"/>
+                <button class="btn btn-outline-success" onclick="document.getElementById('pdfFile').click()">
+                  <i class="bi bi-folder2-open me-1"></i>Choose File
+                </button>
+                <div id="selectedFileName" class="mt-3 small text-muted d-none"></div>
+              </div>
+              <button class="btn btn-success w-100 mt-3" id="extractPdfBtn" onclick="extractFromPdf()" disabled>
+                <i class="bi bi-magic me-1"></i>Extract Citations from PDF
+              </button>
+            </div>
+
+            <!-- Text Tab -->
+            <div class="tab-pane fade" id="textTab">
+              <label class="form-label fw-semibold">Paste paper text or references:</label>
+              <textarea id="textInput" class="form-control" rows="12"
+                        placeholder="Paste your text here. The agent will detect the References section automatically..."></textarea>
+              <button class="btn btn-success w-100 mt-3" onclick="extractFromText()">
+                <i class="bi bi-magic me-1"></i>Extract Citations
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Panel -->
+    <div class="col-md-7">
+      <div id="citationSpinner" class="text-center py-5 d-none">
+        <div class="spinner-border text-success mb-3"></div>
+        <p class="text-muted">Agent is processing document...</p>
+      </div>
+
+      <div id="citationResults" class="d-none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">Extracted Citations <span id="citationCount" class="badge bg-success ms-2">0</span></h5>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" onclick="copyAll('apa')">Copy APA</button>
+            <button class="btn btn-outline-secondary" onclick="copyAll('ieee')">Copy IEEE</button>
+          </div>
+        </div>
+        <div id="citationList"></div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="citationEmpty" class="text-center py-5 text-muted">
+        <i class="bi bi-file-earmark-text fs-1 mb-3 d-block"></i>
+        <p>Upload a PDF or paste text to extract citations.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/citation.js') }}"></script>
+{% endblock %}

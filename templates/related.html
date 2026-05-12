@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Related Work Finder | AI Research Assistant{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5">
+  <div class="page-header mb-4">
+    <h2><i class="bi bi-diagram-3 me-2 text-info"></i>Related Work Agent</h2>
+    <p class="text-muted">Upload your research paper PDF. The agent will extract keywords and find related work from arXiv and Semantic Scholar.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Upload Panel -->
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold"><i class="bi bi-upload me-2"></i>Upload Your Paper</div>
+        <div class="card-body">
+          <div id="dropZone" class="border-2 border-dashed rounded p-4 text-center mb-3"
+               style="border-color:#cbd5e1; cursor:pointer;"
+               onclick="document.getElementById('pdfInput').click()"
+               ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+            <i class="bi bi-file-earmark-pdf fs-1 text-danger mb-2 d-block"></i>
+            <p class="mb-1 fw-semibold">Drop PDF here or click to browse</p>
+            <small class="text-muted">Max 16MB</small>
+          </div>
+          <input type="file" id="pdfInput" accept=".pdf" class="d-none" onchange="handleFile(this.files[0])"/>
+          <div id="fileInfo" class="d-none alert alert-info py-2 small mb-3">
+            <i class="bi bi-file-earmark-pdf me-1"></i><span id="fileName"></span>
+          </div>
+          <button class="btn btn-info text-white w-100" id="findBtn" onclick="findRelated()" disabled>
+            <i class="bi bi-search me-1"></i>Find Related Work
+          </button>
+        </div>
+      </div>
+
+      <!-- Extracted Info -->
+      <div class="card shadow-sm mt-4 d-none" id="extractedCard">
+        <div class="card-header fw-semibold"><i class="bi bi-lightbulb me-2"></i>Extracted from Paper</div>
+        <div class="card-body">
+          <p class="small fw-semibold mb-1">Detected Title:</p>
+          <p class="small text-muted mb-3" id="extractedTitle"></p>
+          <p class="small fw-semibold mb-1">Keywords Used:</p>
+          <div id="keywordBadges"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Panel -->
+    <div class="col-md-8">
+      <!-- Empty state -->
+      <div id="relatedEmpty" class="text-center py-5 text-muted">
+        <i class="bi bi-diagram-3 fs-1 mb-3 d-block"></i>
+        <p>Upload a PDF to discover related research papers.</p>
+      </div>
+
+      <!-- Spinner -->
+      <div id="relatedSpinner" class="text-center py-5 d-none">
+        <div class="spinner-border text-info mb-3"></div>
+        <p class="text-muted">Agent is scanning your paper and searching databases...</p>
+      </div>
+
+      <!-- Results -->
+      <div id="relatedResults" class="d-none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">Related Papers
+            <span id="relatedCount" class="badge bg-info ms-2">0</span>
+          </h5>
+        </div>
+        <div id="relatedList" class="d-flex flex-column gap-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let selectedFile = null;
+
+  function handleDrop(e) {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }
+
+  function handleFile(file) {
+    if (!file || !file.name.endsWith('.pdf')) {
+      alert('Please upload a PDF file.');
+      return;
+    }
+    selectedFile = file;
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileInfo').classList.remove('d-none');
+    document.getElementById('findBtn').disabled = false;
+  }
+
+  async function findRelated() {
+    if (!selectedFile) return;
+
+    document.getElementById('relatedEmpty').classList.add('d-none');
+    document.getElementById('relatedResults').classList.add('d-none');
+    document.getElementById('extractedCard').classList.add('d-none');
+    document.getElementById('relatedSpinner').classList.remove('d-none');
+    document.getElementById('findBtn').disabled = true;
+
+    const formData = new FormData();
+    formData.append('pdf', selectedFile);
+
+    try {
+      const res = await fetch('/related/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (data.error) { alert('Error: ' + data.error); return; }
+
+      // Show extracted info
+      document.getElementById('extractedTitle').textContent = data.extracted_title || 'N/A';
+      const badges = (data.keywords_used || []).map(k =>
+        `<span class="badge bg-secondary me-1 mb-1">${k}</span>`
+      ).join('');
+      document.getElementById('keywordBadges').innerHTML = badges;
+      document.getElementById('extractedCard').classList.remove('d-none');
+
+      // Render papers
+      document.getElementById('relatedCount').textContent = data.papers.length;
+      const list = document.getElementById('relatedList');
+      list.innerHTML = '';
+
+      if (!data.papers.length) {
+        list.innerHTML = '<p class="text-muted text-center">No related papers found.</p>';
+      } else {
+        data.papers.forEach(paper => {
+          const sourceBadge = paper.source === 'arXiv' ? 'bg-primary' : 'bg-info';
+          list.innerHTML += `
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge ${sourceBadge}">${paper.source}</span>
+                  <div class="d-flex gap-2">
+                    ${paper.citation_count > 0 ? `<span class="badge bg-success-subtle text-success"><i class="bi bi-quote me-1"></i>${paper.citation_count} citations</span>` : ''}
+                    ${paper.year ? `<span class="badge bg-secondary">${paper.year}</span>` : ''}
+                  </div>
+                </div>
+                <h6 class="mb-1">
+                  ${paper.url ? `<a href="${paper.url}" target="_blank" class="text-decoration-none text-dark">${paper.title}</a>` : paper.title}
+                </h6>
+                <p class="small text-muted mb-2"><i class="bi bi-person me-1"></i>${paper.authors || 'Unknown'}</p>
+                <p class="small text-muted mb-3">${paper.abstract || ''}</p>
+                <div class="d-flex gap-2">
+                  ${paper.url ? `<a href="${paper.url}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-box-arrow-up-right me-1"></i>View</a>` : ''}
+                  ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>` : ''}
+                </div>
+              </div>
+            </div>`;
+        });
+      }
+
+      document.getElementById('relatedResults').classList.remove('d-none');
+    } catch (err) {
+      alert('Request failed. Ensure Flask is running.');
+    } finally {
+      document.getElementById('relatedSpinner').classList.add('d-none');
+      document.getElementById('findBtn').disabled = false;
+    }
+  }
+</script>
+{% endblock %}

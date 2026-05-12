@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Home | AI Research Assistant{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container-xl text-center">
+    <div class="hero-badge mb-3">
+      <i class="bi bi-cpu me-1"></i> Agent-Based System &bull; SEN-330
+    </div>
+    <h1 class="hero-title">AI Research Assistant</h1>
+    <p class="hero-subtitle">
+      An intelligent multi-agent system that searches, extracts, analyzes, and formats academic research — autonomously.
+    </p>
+    <div class="d-flex flex-wrap gap-3 justify-content-center mt-4">
+      <a href="/search/" class="btn btn-primary btn-lg px-4">
+        <i class="bi bi-search me-2"></i>Search Papers
+      </a>
+      <a href="/dashboard" class="btn btn-outline-light btn-lg px-4">
+        <i class="bi bi-bar-chart me-2"></i>Dashboard
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features Grid -->
+<section class="container-xl py-5">
+  <div class="text-center mb-5">
+    <h2 class="section-heading">Intelligent Agent Capabilities</h2>
+    <p class="text-muted">Five specialized agents working together to support your research workflow.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="feature-card h-100">
+        <div class="feature-icon bg-primary-soft">
+          <i class="bi bi-search text-primary fs-3"></i>
+        </div>
+        <h5 class="fw-bold mt-3">Research Search Agent</h5>
+        <p class="text-muted small">Autonomously queries arXiv and Semantic Scholar APIs, ranks results by citation count and relevance, and stores papers in the local database.</p>
+        <a href="/search/" class="btn btn-sm btn-outline-primary mt-2">Search Papers →</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="feature-card h-100">
+        <div class="feature-icon bg-success-soft">
+          <i class="bi bi-file-earmark-pdf text-success fs-3"></i>
+        </div>
+        <h5 class="fw-bold mt-3">Citation Extraction Agent</h5>
+        <p class="text-muted small">Upload any research PDF and the agent automatically detects the references section, splits individual citations, and parses author/title/year fields.</p>
+        <a href="/citation/" class="btn btn-sm btn-outline-success mt-2">Extract Citations →</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="feature-card h-100">
+        <div class="feature-icon bg-info-soft">
+          <i class="bi bi-diagram-3 text-info fs-3"></i>
+        </div>
+        <h5 class="fw-bold mt-3">Recommendation Agent</h5>
+        <p class="text-muted small">Suggests semantically related papers by extracting keywords from titles and querying the arXiv API for the most relevant related work.</p>
+        <a href="/search/" class="btn btn-sm btn-outline-info mt-2">Find Related →</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="feature-card h-100">
+        <div class="feature-icon bg-warning-soft">
+          <i class="bi bi-shield-check text-warning fs-3"></i>
+        </div>
+        <h5 class="fw-bold mt-3">Plagiarism Detection Agent</h5>
+        <p class="text-muted small">Uses TF-IDF vectorization and cosine similarity to compare submitted text against a corpus. Highlights matching phrases using difflib.</p>
+        <a href="/plagiarism/" class="btn btn-sm btn-outline-warning mt-2">Check Text →</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="feature-card h-100">
+        <div class="feature-icon bg-danger-soft">
+          <i class="bi bi-bookmark-check text-danger fs-3"></i>
+        </div>
+        <h5 class="fw-bold mt-3">Reference Formatting Agent</h5>
+        <p class="text-muted small">Converts raw citation data into perfectly formatted APA 7th, IEEE, and MLA 9th edition references automatically.</p>
+        <a href="/reference/" class="btn btn-sm btn-outline-danger mt-2">Format Refs →</a>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="feature-card h-100">
+        <div class="feature-icon bg-secondary-soft">
+          <i class="bi bi-database text-secondary fs-3"></i>
+        </div>
+        <h5 class="fw-bold mt-3">Research Dashboard</h5>
+        <p class="text-muted small">View statistics, recent searches, saved papers, plagiarism reports, and manage your entire research session from one unified dashboard.</p>
+        <a href="/dashboard" class="btn btn-sm btn-outline-secondary mt-2">View Dashboard →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it Works -->
+<section class="bg-light py-5">
+  <div class="container-xl">
+    <div class="text-center mb-5">
+      <h2 class="section-heading">How the Agent System Works</h2>
+    </div>
+    <div class="row align-items-center g-4">
+      <div class="col-md-3 text-center">
+        <div class="step-circle">1</div>
+        <h6 class="fw-bold mt-3">Input Query or PDF</h6>
+        <p class="small text-muted">User submits a search query or uploads a research PDF.</p>
+      </div>
+      <div class="col-md-1 text-center d-none d-md-block">
+        <i class="bi bi-arrow-right fs-2 text-muted"></i>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="step-circle">2</div>
+        <h6 class="fw-bold mt-3">Agent Processes</h6>
+        <p class="small text-muted">The relevant intelligent agent autonomously executes the task.</p>
+      </div>
+      <div class="col-md-1 text-center d-none d-md-block">
+        <i class="bi bi-arrow-right fs-2 text-muted"></i>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="step-circle">3</div>
+        <h6 class="fw-bold mt-3">Results Returned</h6>
+        <p class="small text-muted">Structured results are presented and saved to the database.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

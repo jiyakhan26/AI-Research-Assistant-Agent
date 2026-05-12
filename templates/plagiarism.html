@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Plagiarism Checker | AI Research Assistant{% endblock %}
+
+{% block content %}
+<div class="container-xl py-5">
+  <div class="page-header mb-4">
+    <h2><i class="bi bi-shield-check me-2 text-warning"></i>Plagiarism Detection Agent</h2>
+    <p class="text-muted">Paste your text below. The agent checks against known sources using TF-IDF cosine similarity.</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Input -->
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold"><i class="bi bi-pencil-square me-2"></i>Submit Text</div>
+        <div class="card-body">
+          <label class="form-label text-muted small">Paste your paragraph or paper section:</label>
+          <textarea id="plagiarismInput" class="form-control" rows="14"
+                    placeholder="Paste your text here (minimum 10 words)..."></textarea>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <span id="wordCountBadge" class="badge bg-secondary">0 words</span>
+            <button class="btn btn-warning fw-semibold" onclick="checkPlagiarism()">
+              <i class="bi bi-shield-check me-1"></i>Check Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="col-md-7">
+      <!-- Loading -->
+      <div id="plagSpinner" class="text-center py-5 d-none">
+        <div class="spinner-border text-warning mb-3"></div>
+        <p class="text-muted">Agent is analyzing text against corpus...</p>
+      </div>
+
+      <!-- Score Card -->
+      <div id="plagResults" class="d-none">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body text-center py-4">
+            <h6 class="text-muted mb-2">Similarity Score</h6>
+            <div class="score-circle mx-auto mb-3" id="scoreCircle">
+              <span id="scoreValue">0%</span>
+            </div>
+            <span id="riskBadge" class="badge fs-6 px-3 py-2">Low Risk</span>
+            <div class="row g-3 mt-3 text-start">
+              <div class="col-6">
+                <div class="info-box">
+                  <small class="text-muted">Words Analyzed</small>
+                  <p class="fw-bold mb-0" id="wordCount">-</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="info-box">
+                  <small class="text-muted">Sources Checked</small>
+                  <p class="fw-bold mb-0" id="sourcesChecked">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Matches -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header fw-semibold"><i class="bi bi-list-check me-2"></i>Top Matches</div>
+          <div class="card-body p-0">
+            <table class="table table-sm mb-0" id="matchesTable">
+              <thead class="table-light">
+                <tr><th>Source</th><th>Similarity</th></tr>
+              </thead>
+              <tbody id="matchesBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Matching Phrases -->
+        <div class="card shadow-sm" id="phrasesCard">
+          <div class="card-header fw-semibold"><i class="bi bi-highlighter me-2"></i>Matching Phrases</div>
+          <div class="card-body" id="phrasesBody"></div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="plagEmpty" class="text-center py-5 text-muted">
+        <i class="bi bi-shield fs-1 mb-3 d-block"></i>
+        <p>Submit text to run plagiarism detection.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/plagiarism.js') }}"></script>
+{% endblock %}
