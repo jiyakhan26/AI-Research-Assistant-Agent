@@ -1,0 +1,12 @@
+venv
+__pycache__
+*.pyc
+.env
+uploads
+models
+faiss_index
+cache
+.git
+.gitignore
+.ipynb_checkpoints
+node_modules
